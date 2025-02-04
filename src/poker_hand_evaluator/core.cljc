@@ -4,7 +4,7 @@
 
 (def suit-details
   "Available suits and the respective bit pattern to be used in the card format"
-  {"♠" 0x1000, "♥" 0x2000, "♦" 0x4000, "♣" 0x8000})
+  {"s" 0x1000, "h" 0x2000, "d" 0x4000, "c" 0x8000})
 
 (def face-details
   "Available face values, including their assigned prime and their rank to be used in the card format"
