@@ -1,6 +1,6 @@
 (ns poker-hand-evaluator.core
-  (:use [poker-hand-evaluator.lookup-tables])
-  (:use [clojure.math.combinatorics]))
+  (:require [poker-hand-evaluator.lookup-tables :as lookup])
+  (:require [clojure.math.combinatorics :refer [combinations]]))
 
 (def suit-details
   "Available suits and the respective bit pattern to be used in the card format"
@@ -74,14 +74,14 @@
   [hand-index card-values]
   (and
     (not= (bit-and (apply bit-and card-values) 0xF000) 0)
-    (flush-to-rank hand-index)
+    (lookup/flush-to-rank hand-index)
     ))
 
 (defn- unique-card-hand
   "Straights or High Card hands are resolved using a specific lookup table to resolve hand with 5 unique cards.
   This lookup will return a hand rank only for straights and high cards (0 for any other hand)."
   [hand-index]
-  (let [hand-rank (unique5-to-rank hand-index)]
+  (let [hand-rank (lookup/unique5-to-rank hand-index)]
     (and (not= hand-rank 0) hand-rank)
     )
   )
@@ -95,8 +95,8 @@
   and then use this index on the second to find the actual hand rank."
   [card-values]
   (let [q (reduce * (map #(bit-and % 0xFF) card-values))
-        q-index (java.util.Collections/binarySearch prime-product-to-combination q)]
-    (or (combination-to-rank q-index) false)
+        q-index (.indexOf lookup/prime-product-to-combination q)]
+    (or (lookup/combination-to-rank q-index) false)
     ))
 
 (defn- calculate-hand-rank
